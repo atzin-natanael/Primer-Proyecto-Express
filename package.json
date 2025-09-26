@@ -1,0 +1,25 @@
+{
+  "name": "bienes-raices",
+  "version": "1.0.0",
+  "description": "Mi primer Proyecto Node.js",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "server": "nodemon index.js"
+  },
+  "keywords": [
+    "MVC",
+    "Pug",
+    "Tailwind",
+    "MySql",
+    "Sequelize"
+  ],
+  "author": "AtziNotFound",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
