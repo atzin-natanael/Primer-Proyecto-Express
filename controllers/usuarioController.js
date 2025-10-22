@@ -1,0 +1,187 @@
+import { check, validationResult } from 'express-validator'
+import bcrypt from 'bcrypt'
+import Usuario from '../models/Usuario.js'
+import {generarId} from '../helpers/tokens.js'
+import {emailRegistro, emailOlvidePassword} from '../helpers/emails.js'
+import {regenerateCsrfToken} from '../middlewares/csrfMiddleware.js'
+
+const formularioLogin = (req, res)=>{
+    res.render('auth/login',{
+        pagina: 'Iniciar Sesión'
+    })
+}
+const formularioRegistro = (req, res)=>{
+    res.render('auth/registro',{
+        pagina: 'Crear Cuenta'
+    })
+}
+const registrar = async(req, res)=>{
+    //validacion
+    await check('nombre').notEmpty().withMessage('El Nombre es obligatorio').run(req)
+    await check('email').isEmail().withMessage('Eso no parece un Email').run(req)
+    await check('password').isLength({min: 6}).withMessage('La contraseña debe tener al menos 6 caracteres').run(req)
+    await check('repetir_password').equals(req.body.password).withMessage('Las contraseñas no son iguales').run(req)
+
+    let resultado = validationResult(req)
+    //verificar el resultado
+    if(!resultado.isEmpty()){
+       //errores
+        return res.render('auth/registro',{
+            pagina: 'Crear Cuenta',
+            errores: resultado.array(),
+            usuario: {
+                nombre: req.body.nombre,
+                email: req.body.email
+            }
+        })
+    }
+    //Verificar duplicados
+    const {nombre, email, password} = req.body
+    const existeUsuario = await Usuario.findOne({where: {email}})
+    if(existeUsuario){
+         return res.render('auth/registro',{
+            pagina: 'Crear Cuenta',
+            errores: [{msg: 'El Usuario ya está registrado'}],
+            usuario: {
+                nombre: req.body.nombre,
+                email: req.body.email
+            }
+        })
+    }
+    //Almacenar usuario
+    const usuario = await Usuario.create({
+        nombre,
+        email,
+        password,
+        token: generarId()
+    })
+    //Envia email de confirmacion
+    emailRegistro({
+        nombre: usuario.nombre,
+        email: usuario.email,
+        token: usuario.token
+    })
+    //Mostrando al cliente la confirmacion
+    res.render('templates/mensaje',{
+        pagina: 'Cuenta Creada correctamente',
+        mensaje: 'Hemos Enviado un Email de Confirmación, presiona en el enlace para confirmar'
+    })
+}
+//Funcion que comprueba una cuenta
+const confirmar = async (req, res)=>{
+    const {token} = req.params;
+    //Verificar si el token es valido
+    const usuario = await Usuario.findOne({where: {token}})
+    if(!usuario){
+        return res.render('auth/confirmar-cuenta',{
+            pagina: 'Error al confirmar tu cuenta',
+            mensaje: 'Hubo un error al confirmar tu cuenta, intenta de nuevo',
+            error: true
+        })
+    }
+    //Confirmar la cuenta
+    usuario.token =null
+    usuario.confirmado = true
+    await usuario.save()
+
+    res.render('auth/confirmar-cuenta',{
+            pagina: 'Cuenta Confirmada',
+            mensaje: 'La Cuenta Se Confirmo Correctamente'
+        })
+}
+const formularioOlvidePassword = (req, res)=>{
+    res.render('auth/olvide-password',{
+        pagina: 'Recuperar Contraseña'
+    })
+}
+const resetPassword = async(req,res) =>{
+     //validacion
+    await check('email').isEmail().withMessage('Eso no parece un Email').run(req)
+
+    let resultado = validationResult(req)
+    //verificar el resultado
+    if(!resultado.isEmpty()){
+       //errores
+        return res.render('auth/olvide-password',{
+        pagina: 'Recuperar Contraseña',
+        errores: resultado.array()
+    })
+    }
+    const {email} = req.body
+    const usuario = await Usuario.findOne({where: {email}})
+    if(!usuario){
+        return res.render('auth/olvide-password',{
+        pagina: 'Recuperar Contraseña',
+        errores: [{msg: 'El email no pertenece a ningun usuario'}]
+    })
+    }
+    //generar token
+    usuario.token = generarId()
+    await usuario.save()
+    //enviar email
+    emailOlvidePassword({
+        email: usuario.email,
+        nombre: usuario.nombre,
+        token: usuario.token
+    })
+    //renderizar un mensaje
+        return res.render('templates/mensaje',{
+            pagina: 'Reestablece tu contraseña',
+            mensaje: 'Hemos enviado un email con las instrucciones'
+        })
+
+}
+const comprobarToken = async(req, res)=>{
+    const {token} = req.params
+    const usuario = await Usuario.findOne({where:{token}})
+    if(!usuario){
+        return res.render('auth/confirmar-cuenta',{
+            pagina: 'Reestablece tu Contraseña',
+            mensaje: 'Hubo un error al validar tu información, intenta de nuevo',
+            error: true
+        })
+    }
+    //Mostrar formulario para modificar pw
+    return res.render('auth/reset-password',{
+        pagina: 'Restablece tu Contraseña'
+    })
+}
+const nuevoPassword = async(req, res)=>{
+    //Valida password
+    await check('password').isLength({min: 6}).withMessage('La contraseña debe tener al menos 6 caracteres').run(req)
+    let resultado = validationResult(req)
+    //verificar el resultado
+    if(!resultado.isEmpty()){
+       //errores
+        return res.render('auth/reset-password',{
+            pagina: 'Restablece tu Contraseña',
+            errores: resultado.array()
+        })
+    }
+    //identificar usuario
+    const {token} = req.params
+    const {password} = req.body
+    //identificar quien hace el cambio
+    const usuario = await Usuario.findOne({where: {token}})
+
+    //hashear pw
+    const salt= await bcrypt.genSalt(10)
+    usuario.password = await  bcrypt.hash(password, salt)    
+    usuario.token=null
+    await usuario.save()
+    
+    return res.render('auth/confirmar-cuenta',{
+    pagina: 'Contraseña Reestablecida',
+    mensaje: 'La Contraseña se reestableció Correctamente'
+    })
+}
+export{
+    formularioLogin,
+    formularioRegistro,
+    registrar,
+    confirmar,
+    formularioOlvidePassword,
+    resetPassword,
+    comprobarToken,
+    nuevoPassword
+}
