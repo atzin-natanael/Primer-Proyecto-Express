@@ -20,9 +20,13 @@ const Usuario = db.define('usuarios',{
 }, {
     hooks: {
         beforeCreate: async function(usuario){
-            const salt= await bcrypt.genSalt(10)
-            usuario.password = await  bcrypt.hash(usuario.password, salt)           
+                const salt= await bcrypt.genSalt(10)
+            usuario.password = await  bcrypt.hash(usuario.password, salt)       
         }
     }
 })
+//Metodo personalizado
+Usuario.prototype.verificarPassword = function(password){
+    return bcrypt.compareSync(password, this.password)
+}
 export default Usuario

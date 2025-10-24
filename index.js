@@ -1,6 +1,7 @@
 import express from 'express'
 import cookieParser from 'cookie-parser'
 import usuarioRoutes from './routes/usuarioRoutes.js'
+import propiedadesRoutes from './routes/propiedadesRoutes.js'
 import db from './config/db.js'
 import { csrfMiddleware, verifyCsrfToken } from './middlewares/csrfMiddleware.js'
 import { errorHandler, notFound } from './middlewares/errorHandler.js'
@@ -33,6 +34,8 @@ app.set('views', './views')
 app.use(express.static('public'))
 //Routing
 app.use('/auth',usuarioRoutes)
+app.use('/', propiedadesRoutes)
+
 
 app.use(notFound)
 app.use(errorHandler)
