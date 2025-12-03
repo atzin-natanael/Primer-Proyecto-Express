@@ -18,22 +18,42 @@ const csrfMiddleware = (req, res, next) =>{
     res.locals.csrfToken = req.csrfToken
     next()
 }
-const verifyCsrfToken = (req, res, next)=>{
-    if(!['POST','PUT','DELETE', 'PATCH'].includes(req.method)){
-        return next()
-    }
-    const csrfTokenFromCookie = req.cookies.csrfToken
-    const csrfTokenFromBody = req.body._csrf
-    console.log(req.method)
-    console.log(req.body)
-    console.log('CSRF Body:', req.body?._csrf)
-    if(csrfTokenFromCookie !== csrfTokenFromBody){
-        const err = new Error('Error Desconocido, Intentar de nuevo')
-        err.status = 403
-        return next(err)
-    }
-    next()
+const verifyCsrfToken = (req, res, next) => {
+  if (!['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method)) {
+    return next()
+  }
+
+  const csrfTokenFromCookie = req.cookies.csrfToken
+  const csrfTokenFromHeader = req.get('CSRF-Token')
+  const csrfTokenFromBody = req.body?._csrf
+
+  const csrfToken = csrfTokenFromHeader || csrfTokenFromBody
+
+  if (csrfTokenFromCookie !== csrfToken) {
+    const err = new Error('Error Desconocido, Intentar de nuevo')
+    err.status = 403
+    return next(err)
+  }
+
+  next()
 }
+
+// const verifyCsrfToken = (req, res, next)=>{
+//     if(!['POST','PUT','DELETE', 'PATCH'].includes(req.method)){
+//         return next()
+//     }
+//     const csrfTokenFromCookie = req.cookies.csrfToken
+//     const csrfTokenFromBody = req.body._csrf
+//     console.log(req.method)
+//     console.log(req.body)
+//     console.log('CSRF Body:', req.body?._csrf)
+//     if(csrfTokenFromCookie !== csrfTokenFromBody){
+//         const err = new Error('Error Desconocido, Intentar de nuevo')
+//         err.status = 403
+//         return next(err)
+//     }
+//     next()
+// }
 const regenerateCsrfToken = (req, res, next)=>{
     if(!['POST','PUT','DELETE', 'PATCH'].includes(req.method)){
         return next()
@@ -41,7 +61,7 @@ const regenerateCsrfToken = (req, res, next)=>{
     const newCsrfToken = generarCsrfToken()
     res.cookie('csrfToken', newCsrfToken,{
         httpOnly: true,
-        sameSite: "strict",
+        //sameSite: "strict",
         secure: process.env.NODE_ENV === 'production',
         maxAge: 3600000 // una hora
     })

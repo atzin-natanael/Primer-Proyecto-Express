@@ -2,6 +2,8 @@ import express from 'express'
 import cookieParser from 'cookie-parser'
 import usuarioRoutes from './routes/usuarioRoutes.js'
 import propiedadesRoutes from './routes/propiedadesRoutes.js'
+import appRoutes from './routes/appRoutes.js'
+import apiRoutes from './routes/apiRoutes.js'
 import db from './config/db.js'
 import { csrfMiddleware, verifyCsrfToken } from './middlewares/csrfMiddleware.js'
 import { errorHandler, notFound } from './middlewares/errorHandler.js'
@@ -24,7 +26,6 @@ try{
 }
 
 //csrf middleware
-app.use(helmet())
 app.use(csrfMiddleware)
 app.use(verifyCsrfToken)
 
@@ -33,8 +34,10 @@ app.set('views', './views')
 //CarpetaPublica
 app.use(express.static('public'))
 //Routing
+app.use('/', appRoutes)
 app.use('/auth',usuarioRoutes)
 app.use('/', propiedadesRoutes)
+app.use('/api', apiRoutes)
 
 
 app.use(notFound)
