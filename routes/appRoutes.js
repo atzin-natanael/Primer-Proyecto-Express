@@ -1,5 +1,6 @@
 import express from 'express'
 import{inicio, categoria, noEncontrado, buscador} from '../controllers/appController.js'
+import { verifyCsrfToken, regenerateCsrfToken } from '../middlewares/csrfMiddleware.js'
 const router = express.Router()
 
 //Pagina de Inicio
@@ -8,8 +9,8 @@ router.get('/', inicio)
 router.get('/categorias/:id', categoria)
 
 //Pagina 404
-router.checkout('/404', noEncontrado)
+router.get('/404', noEncontrado)
 //Buscador
-router.post('/buscador', buscador)
+router.post('/buscador',verifyCsrfToken, buscador, regenerateCsrfToken)
 
 export default router
