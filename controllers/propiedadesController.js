@@ -2,8 +2,8 @@ import {unlink} from 'node:fs/promises'
 import {validationResult} from 'express-validator'
 // import Precio from '../models/Precio.js'
 // import Categoria from '../models/Categoria.js'
-import {Precio, Categoria, Propiedad} from '../models/index.js'
-import { where } from 'sequelize'
+import {Precio, Categoria, Propiedad, Mensaje} from '../models/index.js'
+import {esVendedor} from '../helpers/index.js'
 
 const admin = async(req, res)=>{
     //Leer query string
@@ -256,6 +256,7 @@ const eliminar= async(req, res)=>{
 //Muestra propiedad
 const mostrarPropiedad= async(req, res)=>{
     const {id} = req.params
+
     //comprobar que la propiedad exista
     const propiedad = await Propiedad.findByPk(id,{
         include: [
@@ -269,9 +270,52 @@ const mostrarPropiedad= async(req, res)=>{
     res.render('propiedades/mostrar',{
         propiedad,
         pagina: propiedad.titulo,
+        usuario: req.usuario,
+        esVendedor: esVendedor(req.usuario?.id, propiedad.usuarioId) //optional chaning importante
     })
 }
+const enviarMensaje= async(req, res)=>{
+    const {id} = req.params
 
+    //comprobar que la propiedad exista
+    const propiedad = await Propiedad.findByPk(id,{
+        include: [
+            {model: Categoria, as: 'categoria'},
+            {model: Precio, as: 'precio'}
+        ]
+    })
+    if(!propiedad){
+        return res.redirect('/404')
+    }
+    //renderizar errores
+    let resultado = validationResult(req)
+    if(!resultado.isEmpty()){
+        return res.render('propiedades/mostrar',{
+        propiedad,
+        pagina: propiedad.titulo,
+        usuario: req.usuario,
+        esVendedor: esVendedor(req.usuario?.id, propiedad.usuarioId), //optional chaning importante
+        errores: resultado.array()
+    })
+    }
+    //Almacenar mensaje
+    const {mensaje} = req.body
+    const {id: propiedadId} = req.params
+    const {id: usuarioId}  = req.usuario
+    await Mensaje.create({
+        mensaje,
+        propiedadId,
+        usuarioId
+    })
+    // res.render('propiedades/mostrar',{
+    //     propiedad,
+    //     pagina: propiedad.titulo,
+    //     usuario: req.usuario,
+    //     esVendedor: esVendedor(req.usuario?.id, propiedad.usuarioId), //optional chaning importante
+    //     enviado: true
+    // })
+    res.redirect('/')
+}
 export{
     admin,
     crear,
@@ -281,5 +325,6 @@ export{
     editar,
     guardarCambios,
     eliminar,
-    mostrarPropiedad
+    mostrarPropiedad,
+    enviarMensaje
 }

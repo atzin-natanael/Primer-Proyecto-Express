@@ -1,4 +1,5 @@
 import { Precio, Categoria, Propiedad} from '../models/index.js'
+import { Sequelize } from 'sequelize'
 const inicio = async (req, res) =>{
     const [categorias, precios, casas, departamentos] = await Promise.all([
         Categoria.findAll({raw: true}),
@@ -70,7 +71,29 @@ const noEncontrado = (req, res)=>{
         pagina: 'No encontrado'
     })
 }
-const buscador= (req, res)=>{
+const buscador= async(req, res)=>{
+    const {termino} = req.body
+    //validar si está vacio
+    const backURL = req.get('Referer') || '/'; // ← si no hay referer, vuelve al inicio
+    if(!termino.trim()){
+        console.log(backURL)
+        return res.redirect(backURL)
+    }
+    //Consultar las propiedades
+    const propiedades= await Propiedad.findAll({
+        where:{
+            titulo:{
+                [Sequelize.Op.like] : '%' + termino + '%'
+            }
+        },
+        include: [
+            {model: Precio, as: 'precio'}
+        ]
+    })
+    res.render('busqueda',{
+        pagina: 'Resultados de la busqueda',
+        propiedades
+    })
 
 }
 export {

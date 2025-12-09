@@ -11,6 +11,6 @@ router.get('/categorias/:id', categoria)
 //Pagina 404
 router.get('/404', noEncontrado)
 //Buscador
-router.post('/buscador',verifyCsrfToken, buscador, regenerateCsrfToken)
+router.post('/buscador' , verifyCsrfToken, buscador, regenerateCsrfToken)
 
 export default router
