@@ -7,7 +7,8 @@ const inicio = async (req, res) =>{
         Propiedad.findAll({
             limit:3,
             where:{
-                categoriaId: 1 
+                categoriaId: 1,
+                publicado: 1
             },
             include:[
                 {
@@ -22,7 +23,8 @@ const inicio = async (req, res) =>{
          Propiedad.findAll({
             limit:3,
             where:{
-                categoriaId: 2 
+                categoriaId: 2,
+                publicado: 1
             },
             include:[
                 {
@@ -55,7 +57,8 @@ const categoria = async (req, res) =>{
     //obtener las propiedades de la categoria
     const propiedades = await Propiedad.findAll({
         where:{
-            categoriaId: id
+            categoriaId: id,
+            publicado: 1
         },
         include:[
             {model: Precio, as: 'precio'}

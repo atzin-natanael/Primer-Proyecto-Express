@@ -1,6 +1,6 @@
 import express from 'express'
 import {body} from 'express-validator'
-import {admin, crear, guardar, agregarImagen, almacenarImagen, editar, guardarCambios, eliminar, mostrarPropiedad, enviarMensaje, verMensajes} from '../controllers/propiedadesController.js'
+import {admin, crear, guardar, agregarImagen, almacenarImagen, editar, guardarCambios, eliminar, cambiarEstado, mostrarPropiedad, enviarMensaje, verMensajes} from '../controllers/propiedadesController.js'
 import { ExpressValidator } from 'express-validator'
 import { verifyCsrfToken, regenerateCsrfToken } from '../middlewares/csrfMiddleware.js'
 import protegerRuta from '../middlewares/protegerRuta.js'
@@ -47,6 +47,7 @@ router.post('/propiedades/eliminar/:id',
     eliminar,
     regenerateCsrfToken
 )
+router.put('/propiedades/:id', protegerRuta, cambiarEstado)
 //Area publica
 router.get('/propiedad/:id', identificarUsuario, mostrarPropiedad)
 router.post('/propiedad/:id', identificarUsuario, 

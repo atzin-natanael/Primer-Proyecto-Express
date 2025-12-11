@@ -40,7 +40,6 @@ const admin = async(req, res)=>{
         }) 
 
         ])
-        console.log(total)
         res.render('propiedades/admin',{
             pagina:'Mis Popiedades',
             propiedades,
@@ -254,6 +253,25 @@ const eliminar= async(req, res)=>{
 
 
 }
+//Modifica el estado de la propiedad
+const cambiarEstado = async(req, res)=>{
+    const {id} = req.params
+    //valida que exista la propiedad
+    const propiedad= await Propiedad.findByPk(id)
+    if(!propiedad){
+        return res.redirect('/mis-propiedades')
+    }
+    //Revisa que quien visita la URL, es quien creó la propiedad
+    if(propiedad.usuarioId.toString() !== req.usuario.id.toString()){
+        return res.redirect('/mis-propiedades')
+    }
+    //Actualizar
+    propiedad.publicado= !propiedad.publicado
+    await propiedad.save()
+    res.json({
+        resultado: 'ok'
+    })
+}
 //Muestra propiedad
 const mostrarPropiedad= async(req, res)=>{
     const {id} = req.params
@@ -265,7 +283,7 @@ const mostrarPropiedad= async(req, res)=>{
             {model: Precio, as: 'precio'}
         ]
     })
-    if(!propiedad){
+    if(!propiedad || !propiedad.publicado){
         return res.redirect('/404')
     }
     res.render('propiedades/mostrar',{
@@ -352,6 +370,7 @@ export{
     editar,
     guardarCambios,
     eliminar,
+    cambiarEstado,
     mostrarPropiedad,
     enviarMensaje,
     verMensajes
