@@ -77,10 +77,8 @@ const noEncontrado = (req, res)=>{
 const buscador= async(req, res)=>{
     const {termino} = req.body
     //validar si está vacio
-    const backURL = req.get('Referer') || '/'; // ← si no hay referer, vuelve al inicio
     if(!termino.trim()){
-        console.log(backURL)
-        return res.redirect(backURL)
+        return res.redirect('/')
     }
     //Consultar las propiedades
     const propiedades= await Propiedad.findAll({
