@@ -61,7 +61,7 @@ const regenerateCsrfToken = (req, res, next)=>{
     const newCsrfToken = generarCsrfToken()
     res.cookie('csrfToken', newCsrfToken,{
         httpOnly: true,
-        //sameSite: "strict",
+        sameSite: "strict",
         secure: process.env.NODE_ENV === 'production',
         maxAge: 3600000 // una hora
     })
