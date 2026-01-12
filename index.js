@@ -1,7 +1,7 @@
 import express from 'express'
 import cookieParser from 'cookie-parser'
 import usuarioRoutes from './routes/usuarioRoutes.js'
-import propiedadesRoutes from './routes/propiedadesRoutes.js'
+import appRoutes from './routes/appRoutes.js'
 import db from './config/db.js'
 import { csrfMiddleware, verifyCsrfToken } from './middlewares/csrfMiddleware.js'
 import { errorHandler, notFound } from './middlewares/errorHandler.js'
@@ -33,15 +33,15 @@ app.set('views', './views')
 //CarpetaPublica
 app.use(express.static('public'))
 //Routing
+app.use('/', appRoutes)
 app.use('/auth',usuarioRoutes)
-app.use('/', propiedadesRoutes)
 
 
 app.use(notFound)
 app.use(errorHandler)
 
 //Definir un  puerto
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3001
 app.listen(port, () =>{
     console.log(`El servidor esta funcionando en el puerto ${port}`)
 });

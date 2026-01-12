@@ -1,0 +1,87 @@
+extends ./layout/index
+block contenido 
+    //pre= JSON.stringify(paginaActual, undefined, 2)
+    div.py-10 
+        //- h1.text-4xl.my-10.font-extrabold.text-center Isi 
+        //-     span.font-normal Office
+        h2.text-center.text-2xl.font-extrabold= pagina
+    .mt-10.mx-auto.max-w-6xl
+            table.min-w-full.bg-white.shadow-md.rounded-lg.overflow-hidden
+                thead.bg-gray-800.text-white
+                    tr
+                        th.py-3.px-4.text-left Clave
+                        th.py-3.px-4.text-left Nombre
+                        th.py-3.px-4.text-left Precio
+                        th.py-3.px-4.text-left Existencia
+                tbody
+                    each codigo in codigos
+                        tr.border-b.hover_bg-gray-100
+                            td.py-3.px-4= codigo.CLAVE_ARTICULO
+                            td.py-3.px-4= codigo.NOMBRE
+                            td.py-3.px-4.font-bold= `$${codigo.PRECIO} MXN`
+                            td.py-3.px-4= codigo.TOTAL_EXISTENCIA
+                    else
+                        tr
+                            td.py-3.px-4.text-center(colspan="4") No hay productos disponibles
+            div(class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6")
+                    div(class= "flex-1 flex justify-between sm:hidden")
+                        a(href=`/inicio?pagina=${paginaActual - 1}` class=`${paginaActual === 1 ? 'pointer-events-none bg-gray-100' : ''} relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50`) Anterior
+                        a(href=`/inicio?pagina=${paginaActual + 1}` class=`${paginaActual === paginas ? 'pointer-events-none bg-gray-100' : ''} relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50`) Siguiente
+                    div(class= " hidden sm:flex1 sm:flex sm:items-center sm:justify-between")
+                        p(class="text-sm text-gray-700 gap-2") Mostrando 
+                            span(class="font-medium") #{offset + 1} a 
+                            span(class="font-medium") #{total < limit + offset ? total : limit+offset} de 
+                            span(class="font-medium") #{total} resultados
+                    //- div(class= "hidden sm:block")
+                    //-     nav(class= "relative z-0 inline-flex rounded-md shadow-md")
+                    //-         - var n = 1
+                    //-             while n<= paginas
+                    //-                 a(href=`/inicio?pagina=${n}` class= `${paginaActual == n ? 'bg-indigo-50 border-indigo-500 text-indigo-600' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50 '}relative inline-flex items-center px-4 py-2 border text-sm font-medium`) #{n++} 
+                    div(class="hidden sm:block")
+                    div(class="pagination-buttons flex flex-wrap items-center gap-2")
+                        // << Primera
+                        a(href="/inicio?pagina=1")
+                            input(
+                            type="button"
+                            value="<<"
+                            class=`page-btn p-2 rounded cursor-pointer ${paginaActual === 1 ? 'bg-gray-200 cursor-not-allowed' : 'bg-gray-300 hover:bg-gray-400'}`
+                            disabled=paginaActual===1
+                            )
+
+                        // < Anterior
+                        a(href=`/inicio?pagina=${paginaActual - 1}`)
+                            input(
+                            type="button"
+                            value="<"
+                            class=`page-btn p-2 rounded cursor-pointer ${paginaActual === 1 ? 'bg-gray-200 cursor-not-allowed' : 'bg-gray-300 hover:bg-gray-400'}`
+                            disabled=paginaActual===1
+                            )
+
+                        // ====== NÚMEROS (VENTANA DE 10) ======
+                        - const maxPaginas = 10
+                        - let inicio = Math.max(1, paginaActual - Math.floor(maxPaginas / 2))
+                        - let fin = inicio + maxPaginas - 1
+                        - if (fin > paginas) {
+                        -   fin = paginas
+                        -   inicio = Math.max(1, fin - maxPaginas + 1)
+                        - }
+                        - for (let i = inicio; i <= fin; i++)
+                            a(href=`/inicio?pagina=${i}`)
+                                input(type="button" value=i class=`page-btn py-2 px-4 rounded cursor-pointer ${paginaActual === i ? 'bg-red-500 text-white font-bold' : 'bg-gray-300 hover:bg-gray-400'}`)
+                        // > Siguiente
+                        a(href=`/inicio?pagina=${paginaActual + 1}`)
+                            input(
+                            type="button"
+                            value=">"
+                            class=`page-btn p-2 rounded cursor-pointer ${paginaActual === paginas ? 'bg-gray-200 cursor-not-allowed' : 'bg-gray-300 hover:bg-gray-400'}`
+                            disabled=paginaActual===paginas
+                            )
+
+                        // >> Última
+                        a(href=`/inicio?pagina=${paginas}`)
+                            input(
+                            type="button"
+                            value=">>"
+                            class=`page-btn p-2 rounded cursor-pointer ${paginaActual === paginas ? 'bg-gray-200 cursor-not-allowed' : 'bg-gray-300 hover:bg-gray-400'}`
+                            disabled=paginaActual===paginas
+                            )

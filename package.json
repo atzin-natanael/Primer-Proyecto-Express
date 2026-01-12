@@ -7,7 +7,9 @@
   "scripts": {
     "start": "node index.js",
     "server": "nodemon index.js",
-    "css": "postcss public/css/tailwind.css -o public/css/app.css --watch"
+    "css": "postcss public/css/tailwind.css -o public/css/app.css --watch",
+    "dev": "npm run css",
+    "db:importar": "node ./seed/seeder.js -i"
   },
   "keywords": [
     "MVC",
@@ -24,7 +26,7 @@
     "crypto-browserify": "^3.12.1",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
-    "express-validator": "^7.2.1",
+    "express-validator": "^7.3.0",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.15.2",

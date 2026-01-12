@@ -8,7 +8,8 @@ import {regenerateCsrfToken} from '../middlewares/csrfMiddleware.js'
 
 const formularioLogin = (req, res)=>{
     res.render('auth/login',{
-        pagina: 'Iniciar Sesión'
+        pagina: 'Iniciar Sesión',
+        barra: true
     })
 }
 const autenticar = async (req, res) =>{
@@ -54,8 +55,7 @@ const autenticar = async (req, res) =>{
         httpOnly: true
         //secure: true,
         //sameSite: true
-
-    }).redirect('/mis-propiedades')
+    }).redirect('/')
 
 }
 const formularioRegistro = (req, res)=>{
