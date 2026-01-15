@@ -5,9 +5,15 @@ html(lang="es")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
         title Isi Office | #{pagina}
         link(rel="stylesheet", href="/css/app.css")
-    body.min-h-screen.bg-gray-50
+    
+    //- 1. Agregamos 'flex' y 'flex-col' al body
+    body.min-h-screen.bg-gray-50.flex.flex-col
         if barra
             include header
-        main.mx-auto.container.mt-10.px-2
+        
+        //- 2. Agregamos 'flex-grow' al main para que empuje al footer
+        main.mx-auto.container.mt-10.px-2.flex-grow
             block contenido
+        
+        //- 3. El footer ahora siempre estará al final
         include footer

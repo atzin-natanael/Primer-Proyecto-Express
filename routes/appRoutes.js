@@ -1,7 +1,8 @@
 import express from 'express';
-import { inicio } from '../controllers/appController.js';
+import { inicio, crearPedido } from '../controllers/appController.js';
 const router = express.Router();
 
-router.get('/inicio', inicio);
+router.get('/catalogo', inicio);
+router.get('/crearPedido', crearPedido);
 
 export default router;

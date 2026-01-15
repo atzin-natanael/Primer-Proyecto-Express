@@ -55,7 +55,7 @@ const autenticar = async (req, res) =>{
         httpOnly: true
         //secure: true,
         //sameSite: true
-    }).redirect('/')
+    }).redirect('/catalogo')
 
 }
 const formularioRegistro = (req, res)=>{

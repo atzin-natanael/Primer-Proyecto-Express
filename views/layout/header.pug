@@ -1,11 +1,14 @@
 header.bg-gray-300.p-4
     .container.mx-auto.flex.justify-between.items-center
-        a(href="/") 
+        a(href="/catalogo") 
             //- h1.text-2xl.text-white.font-extrabold.text-center Isi
             //-     span.font-normal Office
             img(src="/uploads/logo.png", alt="logo", class="h-16 inline-block ml-2")
-
-        //- nav(class="my-5 text-sm md:flex md:items-center md:gap-3 font-bold text-white hidden")
-        //-     a(class="bg-indigo-800 py-2 px-10 rounded-lg" href="") Mis Propiedades
-        //-     a(class="bg-indigo-800 py-2 px-10 rounded-lg" href="") Mis Perfil
-        //-     a(class="bg-indigo-800 py-2 px-10 rounded-lg" href="") Cerrar Sesión
+        nav(class="my-5 text-sm md:flex md:items-center md:gap-3 font-bold text-white hidden")
+            a(class=`${pagina === 'Catálogo' ? 'bg-red-600' : 'bg-slate-700'} py-2 px-6 rounded-lg transition-colors shadow-sm` href="/catalogo") Catálogo
+            //- Botones Secundarios (Gris oscuro/Azulado para no cansar la vista)
+            a(class=`${pagina === 'Crear Pedido' ? 'bg-red-600' : 'bg-slate-700'} py-2 px-6 rounded-lg transition-colors shadow-sm` href="/crearPedido") Crear Pedido
+            a(class=`${pagina === 'Mis Pedidos' ? 'bg-red-600' : 'bg-slate-700'} py-2 px-6 rounded-lg transition-colors shadow-sm` href="/Pedidos") Mis Pedidos
+            a(class=`${pagina === 'Mi Perfil' ? 'bg-red-600' : 'bg-slate-700'} py-2 px-6 rounded-lg transition-colors shadow-sm` href="/Perfil") Mi Perfil
+            //- Botón de Salida (Un tono neutro o bordeado para diferenciarlo)
+            a(class="bg-gray-500 hover:bg-gray-600 py-2 px-6 rounded-lg transition-colors shadow-sm" href="/cerrarSesion") Cerrar Sesión
