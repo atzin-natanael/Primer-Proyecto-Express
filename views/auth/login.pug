@@ -1,8 +1,8 @@
 extends ../layout/index
 block contenido 
     div.py-10 
-        h1.text-4xl.my-10.font-extrabold.text-center Papeleria
-            span.font-normal Cornejo    
+        h1.text-4xl.my-10.font-extrabold.text-center Isi 
+            span.font-normal Office    
         h2.text-center.text-2xl.font-extrabold= pagina
         if(errores)
             div.max-w-md.mx-auto.my-10
@@ -21,4 +21,4 @@ block contenido
                     div.flex.items-center.justify-between
                        a.text-gray-500.text-xs(href="/auth/registro") ¿No tienes cuenta? Crear Cuenta  
                        a.text-gray-500.text-xs(href="/auth/olvide-password") Olvidé mi Contraseña
-                    input(class= "w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 cursor-pointer" type="submit" value="Iniciar Sesión")
+                    input(class= "w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 cursor-pointer" type="submit" value="Iniciar Sesión")

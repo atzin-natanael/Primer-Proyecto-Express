@@ -1,8 +1,8 @@
 extends ../layout/index
 block contenido
     div.py-10 
-        h1.text-4xl.my-10.font-extrabold.text-center Papeleria
-            span.font-normal Cornejo
+        h1.text-4xl.my-10.font-extrabold.text-center Isi
+            span.font-normal Office
         h2.text-center.text-2xl.font-extrabold= pagina
         if(errores)
             div.max-w-md.mx-auto.my-10
@@ -19,6 +19,9 @@ block contenido
                     div
                         label.block.text-sm.uppercase.text-gray-600.mb-3.font-bold(for="email") Email
                         input#email.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Tu Email" type="email" name="email" value = usuario ? usuario.email: '') 
+                    div
+                        label.block.text-sm.uppercase.text-gray-600.mb-3.font-bold(for="clave") Tu Clave de Cliente
+                        input#clave.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Tu Clave de Cliente" type= "text" name= "clave" value = usuario ? usuario.clave: '')
                     div
                         label.block.text-sm.uppercase.text-gray-600.mb-3.font-bold(for="password") Contraseña
                         input#password.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Tu Contraseña" type="password" name= "password")

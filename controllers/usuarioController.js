@@ -49,7 +49,6 @@ const autenticar = async (req, res) =>{
     }
     //autenticar el usuario
     const token =generarJWT({id: usuario.id, nombre: usuario.nombre})
-    console.log(token)
     //almacenar en cookie
     return res.cookie('_token', token, {
         httpOnly: true
@@ -66,6 +65,7 @@ const formularioRegistro = (req, res)=>{
 const registrar = async(req, res)=>{
     //validacion
     await check('nombre').notEmpty().withMessage('El Nombre es obligatorio').run(req)
+    await check('clave').notEmpty().withMessage('La Clave es obligatoria').run(req)
     await check('email').isEmail().withMessage('Eso no parece un Email').run(req)
     await check('password').isLength({min: 6}).withMessage('La contraseña debe tener al menos 6 caracteres').run(req)
     await check('repetir_password').equals(req.body.password).withMessage('Las contraseñas no son iguales').run(req)
@@ -79,12 +79,13 @@ const registrar = async(req, res)=>{
             errores: resultado.array(),
             usuario: {
                 nombre: req.body.nombre,
-                email: req.body.email
+                email: req.body.email,
+                clave: req.body.clave
             }
         })
     }
     //Verificar duplicados
-    const {nombre, email, password} = req.body
+    const {nombre, email, password, clave} = req.body
     const existeUsuario = await Usuario.findOne({where: {email}})
     if(existeUsuario){
          return res.render('auth/registro',{
@@ -92,7 +93,8 @@ const registrar = async(req, res)=>{
             errores: [{msg: 'El Usuario ya está registrado'}],
             usuario: {
                 nombre: req.body.nombre,
-                email: req.body.email
+                email: req.body.email,
+                clave: req.body.clave
             }
         })
     }
@@ -101,6 +103,7 @@ const registrar = async(req, res)=>{
         nombre,
         email,
         password,
+        clave,
         token: generarId()
     })
     //Envia email de confirmacion
@@ -223,14 +226,27 @@ const nuevoPassword = async(req, res)=>{
     mensaje: 'La Contraseña se reestableció Correctamente'
     })
 }
+const cerrarSesion= (req,res)=>{
+    return res.clearCookie('_token').status(200).redirect('/auth/login')
+}
+const perfil = (req, res) => {
+    res.render('auth/perfil', {
+        pagina: 'Mi Perfil',
+        usuario: req.usuario
+    })
+}
+
+
 export{
     formularioLogin,
     autenticar,
     formularioRegistro,
     registrar,
-    confirmar,
+    confirmar,  
     formularioOlvidePassword,
     resetPassword,
     comprobarToken,
-    nuevoPassword
+    nuevoPassword,
+    cerrarSesion,
+    perfil
 }

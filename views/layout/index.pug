@@ -9,6 +9,8 @@ html(lang="es")
     //- 1. Agregamos 'flex' y 'flex-col' al body
     body.min-h-screen.bg-gray-50.flex.flex-col
         if barra
+            include header-app
+        else
             include header
         
         //- 2. Agregamos 'flex-grow' al main para que empuje al footer
